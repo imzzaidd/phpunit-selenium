@@ -1,0 +1,12 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "php-webdriver/webdriver": "^1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Testing\\Pages\\": "testing/pages/",
+            "Testing\\Tests\\": "testing/tests/"
+        }
+    }
+}
