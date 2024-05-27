@@ -31,6 +31,18 @@ class LoginTest extends TestCase
         $successMessage = $loginPage->getSuccessMessage();
         $this->assertStringContainsString('Logged In Successfully', $successMessage);
     }
+    public function testFailedLogin()
+    {
+        $loginPage = new LoginPage($this->driver);
+        $loginPage->open();
+        $loginPage->setUsername('incorrectUser');
+        $loginPage->setPassword('Password123');
+        $loginPage->clickLoginButton();
+
+        $failedMessage = $loginPage->getErrorMessage();
+        $this->assertStringContainsString('Your username is invalid!',  $failedMessage);
+    }
+
 }
 ?>
 
