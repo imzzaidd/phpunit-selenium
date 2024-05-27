@@ -41,6 +41,21 @@ class LoginPage
         return $this->driver->findElement(WebDriverBy::xpath('//h1[@class="post-title" and contains(text(), "Logged In Successfully")]'))->getText();
     }
 
+    public function getErrorMessageUser()
+    {
+        $this->waitForElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your username is invalid!')]"    ));
+        return $this->driver->findElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your username is invalid!')]"))->getText();
+    
+    }
+
+    public function getErrorMessagePassword()
+    {
+        $this->waitForElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your password is invalid!')]"    ));
+        return $this->driver->findElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your password is invalid!')]" ))->getText();
+    
+    }
+
+
     protected function waitForElement($by, $timeout = 10)
     {
         $wait = new \Facebook\WebDriver\WebDriverWait($this->driver, $timeout);
