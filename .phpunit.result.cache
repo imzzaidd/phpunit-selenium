@@ -1,1 +1,0 @@
-{"version":1,"defects":{"Testing\\Tests\\UI\\LoginTest::testSuccessfulLogin":4,"Testing\\Tests\\UI\\LoginTest::testFailedLogin":4},"times":{"Testing\\Tests\\UI\\LoginTest::testSuccessfulLogin":6.884,"Testing\\Tests\\UI\\LoginTest::testFailedLogin":5.481}}
