@@ -36,8 +36,12 @@ COPY --from=composer:2.1 /usr/bin/composer /usr/bin/composer
 # Instala las dependencias de Composer
 RUN composer install --no-scripts --no-autoloader
 
+# Copia el script de entrada
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Exponer el puerto 80
 EXPOSE 80
 
-# Comando por defecto para ejecutar las pruebas
-CMD ["vendor/bin/phpunit", "--configuration", "phpunit.xml", "--testsuite", "UI Tests"]
+# Comando por defecto para ejecutar el script de entrada
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

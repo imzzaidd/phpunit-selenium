@@ -12,7 +12,8 @@ class LoginTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->driver = RemoteWebDriver::create('http://localhost:4444/wd/hub', DesiredCapabilities::chrome());
+        // Actualiza la URL para Selenium 4
+        $this->driver = RemoteWebDriver::create('http://selenium-hub:4444', DesiredCapabilities::chrome());
     }
 
     protected function tearDown(): void
