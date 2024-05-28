@@ -4,63 +4,102 @@ namespace Testing\Pages;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\WebDriverWait;
 
 class LoginPage
 {
     protected $driver;
+    private const URL = 'https://practicetestautomation.com/practice-test-login/';
+    private const USERNAME_FIELD = "//input[@id='username']";
+    private const PASSWORD_FIELD = "//input[@name='password']";
+    private const LOGIN_BUTTON = "//button[contains(.,'Submit')]";
+    private const SUCCESS_MESSAGE = "//h1[@class='post-title' and contains(text(), 'Logged In Successfully')]";
+    private const ERROR_MESSAGE_USER = "//div[@class='show'][contains(.,'Your username is invalid!')]";
+    private const ERROR_MESSAGE_PASSWORD = "//div[@class='show'][contains(.,'Your password is invalid!')]";
 
     public function __construct(RemoteWebDriver $driver)
     {
         $this->driver = $driver;
     }
 
-    public function open()
+    public function open(): void
     {
-        $this->driver->get('https://practicetestautomation.com/practice-test-login/');
-        $this->waitForElement(WebDriverBy::xpath('//input[@id="username"]'));
+        $this->driver->get(self::URL);
+        $this->assertCurrentUrl(self::URL);
+        $this->waitForElement(WebDriverBy::xpath(self::USERNAME_FIELD));
     }
 
-    public function setUsername($username)
+    public function setUsername(string $username): void
     {
-        $this->driver->findElement(WebDriverBy::xpath("//input[@name='username']"))->sendKeys($username);
+        $this->fillField(WebDriverBy::xpath(self::USERNAME_FIELD), $username);
     }
 
-    public function setPassword($password)
+    public function setPassword(string $password): void
     {
-        $this->driver->findElement(WebDriverBy::xpath("//input[@name='password']"))->sendKeys($password);
+        $this->fillField(WebDriverBy::xpath(self::PASSWORD_FIELD), $password);
     }
 
-    public function clickLoginButton()
+    public function clickLoginButton(): void
     {
-        $this->driver->findElement(WebDriverBy::xpath("//button[contains(.,'Submit')]"))->click();
+        $this->clickElement(WebDriverBy::xpath(self::LOGIN_BUTTON));
     }
 
-    public function getSuccessMessage()
+    public function getSuccessMessage(): string
     {
-        $this->waitForElement(WebDriverBy::xpath('//h1[@class="post-title" and contains(text(), "Logged In Successfully")]'));
-        return $this->driver->findElement(WebDriverBy::xpath('//h1[@class="post-title" and contains(text(), "Logged In Successfully")]'))->getText();
+        return $this->getElementText(WebDriverBy::xpath(self::SUCCESS_MESSAGE));
     }
 
-    public function getErrorMessageUser()
+    public function getErrorMessageUser(): string
     {
-        $this->waitForElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your username is invalid!')]"    ));
-        return $this->driver->findElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your username is invalid!')]"))->getText();
-    
+        return $this->getElementText(WebDriverBy::xpath(self::ERROR_MESSAGE_USER));
     }
 
-    public function getErrorMessagePassword()
+    public function getErrorMessagePassword(): string
     {
-        $this->waitForElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your password is invalid!')]"    ));
-        return $this->driver->findElement(WebDriverBy::xpath("//div[@class='show'][contains(.,'Your password is invalid!')]" ))->getText();
-    
+        return $this->getElementText(WebDriverBy::xpath(self::ERROR_MESSAGE_PASSWORD));
     }
 
-
-    protected function waitForElement($by, $timeout = 10)
+    private function assertCurrentUrl(string $expectedUrl): void
     {
-        $wait = new \Facebook\WebDriver\WebDriverWait($this->driver, $timeout);
+        if ($this->driver->getCurrentURL() !== $expectedUrl) {
+            throw new \Exception("Failed to open the correct URL: expected $expectedUrl but got " . $this->driver->getCurrentURL());
+        }
+    }
+
+    private function waitForElement(WebDriverBy $by, int $timeout = 10): void
+    {
+        $wait = new WebDriverWait($this->driver, $timeout);
         $wait->until(WebDriverExpectedCondition::presenceOfElementLocated($by));
+    }
+
+    private function fillField(WebDriverBy $by, string $value): void
+    {
+        try {
+            $element = $this->driver->findElement($by);
+            $element->clear();
+            $element->sendKeys($value);
+        } catch (\Exception $e) {
+            throw new \Exception("Failed to fill field: " . $e->getMessage());
+        }
+    }
+
+    private function clickElement(WebDriverBy $by): void
+    {
+        try {
+            $this->driver->findElement($by)->click();
+        } catch (\Exception $e) {
+            throw new \Exception("Failed to click element: " . $e->getMessage());
+        }
+    }
+
+    private function getElementText(WebDriverBy $by): string
+    {
+        try {
+            $this->waitForElement($by);
+            return $this->driver->findElement($by)->getText();
+        } catch (\Exception $e) {
+            throw new \Exception("Failed to get element text: " . $e->getMessage());
+        }
     }
 }
 ?>
-

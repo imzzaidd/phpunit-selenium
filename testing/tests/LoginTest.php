@@ -12,15 +12,18 @@ class LoginTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->driver = RemoteWebDriver::create('http://localhost:4444/wd/hub', DesiredCapabilities::chrome());
+        // Actualiza la URL para Selenium 4
+        $this->driver = RemoteWebDriver::create('http://selenium-hub:4444', DesiredCapabilities::chrome());
     }
 
     protected function tearDown(): void
     {
-        $this->driver->quit();
+        if ($this->driver) {
+            $this->driver->quit();
+        }
     }
 
-    public function testSuccessfulLogin()
+    public function testSuccessfulLogin(): void
     {
         $loginPage = new LoginPage($this->driver);
         $loginPage->open();
@@ -31,7 +34,8 @@ class LoginTest extends TestCase
         $successMessage = $loginPage->getSuccessMessage();
         $this->assertStringContainsString('Logged In Successfully', $successMessage);
     }
-    public function testFailedLoginUser()
+
+    public function testFailedLoginUser(): void
     {
         $loginPage = new LoginPage($this->driver);
         $loginPage->open();
@@ -40,9 +44,10 @@ class LoginTest extends TestCase
         $loginPage->clickLoginButton();
 
         $failedMessage = $loginPage->getErrorMessageUser();
-        $this->assertStringContainsString('Your username is invalid!',  $failedMessage);
+        $this->assertStringContainsString('Your username is invalid!', $failedMessage);
     }
-    public function testFailedLoginPassword()
+
+    public function testFailedLoginPassword(): void
     {
         $loginPage = new LoginPage($this->driver);
         $loginPage->open();
@@ -51,10 +56,7 @@ class LoginTest extends TestCase
         $loginPage->clickLoginButton();
 
         $failedMessage = $loginPage->getErrorMessagePassword();
-        $this->assertStringContainsString('Your password is invalid!',  $failedMessage);
+        $this->assertStringContainsString('Your password is invalid!', $failedMessage);
     }
-
 }
-?>
-
 ?>
