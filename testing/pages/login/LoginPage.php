@@ -1,5 +1,5 @@
 <?php
-namespace Testing\Pages;
+namespace Testing\Pages\Login;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
