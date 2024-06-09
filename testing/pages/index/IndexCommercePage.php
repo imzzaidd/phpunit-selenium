@@ -69,11 +69,17 @@ class IndexCommercePage
     public function verifyClickAbout(): string
     {
         $currentUrl = $this->driver->getCurrentURL();
-        if ($currentUrl !== 'https://saucelabs.com/') { 
-            throw new \Exception("Failed to redirect to the correct URL after clicking 'About'. Expected: 'URL_ESPERADA', Actual: '$currentUrl'");
+        $expectedUrl = 'https://saucelabs.com'; // Reemplazar con la URL esperada después de hacer clic en "About"
+        if (rtrim($currentUrl, '/') !== rtrim($expectedUrl, '/')) {
+            throw new \Exception("Failed to redirect to the correct URL after clicking 'About'. Expected: '$expectedUrl', Actual: '$currentUrl'");
         }
         return $currentUrl;
     }
+    public function backToIndex(): void
+    {
+        $this->driver->navigate()->back();
+    }
+
 
     #---------------------------------------------------------
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void
@@ -84,8 +90,11 @@ class IndexCommercePage
 
     private function assertCurrentUrl(string $expectedUrl): void
     {
-        if ($this->driver->getCurrentURL() !== $expectedUrl) {
-            throw new \Exception("Failed to open the correct URL: expected $expectedUrl but got " . $this->driver->getCurrentURL());
+        $currentUrl = rtrim($this->driver->getCurrentURL(), '/');
+        $normalizedExpectedUrl = rtrim($expectedUrl, '/');
+        
+        if ($currentUrl !== $normalizedExpectedUrl) {
+            throw new \Exception("Failed to open the correct URL: expected $normalizedExpectedUrl but got $currentUrl");
         }
     }
 

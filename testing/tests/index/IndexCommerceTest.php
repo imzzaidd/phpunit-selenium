@@ -31,10 +31,11 @@ class IndexCommerceTest extends TestCase
         $indexCommercePage->setPassword('secret_sauce');
         $indexCommercePage->clickLoginButton();
         $successlogin = $indexCommercePage->verifyLoginSuccessfull();
-        $this->assertStringContainsString('Logged In Successfully', $successlogin);
+        $this->assertStringContainsString('Products', $successlogin);
         $indexCommercePage->clickHamburgerMenu();
         $indexCommercePage->verifyClickHambugerMenu();
-        $this->assertStringContainsString('About', $indexCommercePage->verifyClickHambugerMenu());
-        
+        $indexCommercePage->clickAbout();
+        $indexCommercePage->verifyClickAbout();
+
     }
 }
