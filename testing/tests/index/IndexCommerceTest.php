@@ -12,10 +12,8 @@ class IndexCommerceTest extends TestCase
 
     protected function setUp(): void
     {
-        // Actualiza la URL para Selenium 4
         $this->driver = RemoteWebDriver::create('http://selenium-hub:4444', DesiredCapabilities::chrome());
     }
-
     protected function tearDown(): void
     {
         if ($this->driver) {
@@ -23,7 +21,7 @@ class IndexCommerceTest extends TestCase
         }
     }
 
-    public function testIndexCommerce(): void
+    private function login(): IndexCommercePage
     {
         $indexCommercePage = new IndexCommercePage($this->driver);
         $indexCommercePage->open();
@@ -32,10 +30,25 @@ class IndexCommerceTest extends TestCase
         $indexCommercePage->clickLoginButton();
         $successlogin = $indexCommercePage->verifyLoginSuccessfull();
         $this->assertStringContainsString('Products', $successlogin);
+        
+        return $indexCommercePage;
+    }
+    public function testIndex(): void
+    {
+        $this->login();
+    }
+
+    public function testHamburgerMenu(): void
+    {
+        $indexCommercePage = $this->login();
         $indexCommercePage->clickHamburgerMenu();
         $indexCommercePage->verifyClickHambugerMenu();
         $indexCommercePage->clickAbout();
         $indexCommercePage->verifyClickAbout();
-
+        $indexCommercePage->backToIndex();
+        $indexCommercePage->clickHamburgerMenu();
+        $indexCommercePage->clickLogout();
+        $indexCommercePage->verifyLogout();
+    
     }
 }

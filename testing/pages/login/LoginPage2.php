@@ -16,8 +16,9 @@ class LoginPage2
     private const LOGIN_BUTTON = "//input[@value='Login']";
     private const SUBTITLE = "//span[@class='title'][contains(.,'Products')]";
     private const ERROR_MESSAGE = "//h3[contains(@data-test,'error')]";
-    private const HAMBURGER_MENU = "//button[contains(.,'Open Menu')]]";
+    private const HAMBURGER_MENU = "//button[contains(.,'Open Menu')]"; 
     private const LOGOUT_TEXT = "//a[contains(.,'Logout')]";
+    private const LOGIN_INFO = "//div[contains(@class,'login_credentials_wrap-inner')]";
 
     public function __construct(RemoteWebDriver $driver)
     {
@@ -61,6 +62,11 @@ class LoginPage2
         $this->clickElement(WebDriverBy::xpath(self::LOGOUT_TEXT));
     }
     
+    public function verifyLogout(): string
+    {
+        return $this->getElementText(WebDriverBy::xpath(self::LOGIN_INFO));
+    }
+    
 
 #---------------------------------------------------------
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void
@@ -70,8 +76,11 @@ class LoginPage2
     }
     private function assertCurrentUrl(string $expectedUrl): void
     {
-        if ($this->driver->getCurrentURL() !== $expectedUrl) {
-            throw new \Exception("Failed to open the correct URL: expected $expectedUrl but got " . $this->driver->getCurrentURL());
+        $currentUrl = rtrim($this->driver->getCurrentURL(), '/');
+        $normalizedExpectedUrl = rtrim($expectedUrl, '/');
+        
+        if ($currentUrl !== $normalizedExpectedUrl) {
+            throw new \Exception("Failed to open the correct URL: expected $normalizedExpectedUrl but got $currentUrl");
         }
     }
     private function fillField(WebDriverBy $by, string $value): void

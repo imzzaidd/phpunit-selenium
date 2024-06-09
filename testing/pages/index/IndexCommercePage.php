@@ -10,6 +10,7 @@ class IndexCommercePage
 {
     protected $driver;
     private const URL = 'https://www.saucedemo.com';
+    private const URL_INDEX="https://www.saucedemo.com/inventory.html";
     private const LOGO = "//div[@class='login_logo'][contains(.,'Swag Labs')]";
     private const USERNAME_FIELD = "//input[contains(@placeholder,'Username')]";
     private const PASSWORD_FIELD = "//input[contains(@placeholder,'Password')]";
@@ -18,6 +19,7 @@ class IndexCommercePage
     private const HAMBURGER_MENU = "//button[contains(.,'Open Menu')]"; 
     private const CLOSE_HAMBURGER_MENU = "//button[contains(.,'Close Menu')]";
     private const ABOUT_TEXT = "//a[contains(.,'About')]";
+    private const LOGOUT_TEXT = "//a[contains(.,'Logout')]";
 
     public function __construct(RemoteWebDriver $driver)
     {
@@ -69,7 +71,7 @@ class IndexCommercePage
     public function verifyClickAbout(): string
     {
         $currentUrl = $this->driver->getCurrentURL();
-        $expectedUrl = 'https://saucelabs.com'; // Reemplazar con la URL esperada después de hacer clic en "About"
+        $expectedUrl = 'https://saucelabs.com'; 
         if (rtrim($currentUrl, '/') !== rtrim($expectedUrl, '/')) {
             throw new \Exception("Failed to redirect to the correct URL after clicking 'About'. Expected: '$expectedUrl', Actual: '$currentUrl'");
         }
@@ -78,8 +80,22 @@ class IndexCommercePage
     public function backToIndex(): void
     {
         $this->driver->navigate()->back();
-    }
+        $this->assertCurrentUrl(self::URL_INDEX);
 
+    }
+    public function clickLogout(): void
+    {
+        $this->clickElement(WebDriverBy::xpath(self::LOGOUT_TEXT));
+    }
+    public function verifyLogout(): string
+    {
+        $currentUrl = $this->driver->getCurrentURL();
+        $expectedUrl = 'https://www.saucedemo.com';
+        if (rtrim($currentUrl, '/') !== rtrim($expectedUrl, '/')) {
+            throw new \Exception("Failed to redirect to the correct URL after clicking 'Logout'. Expected: '$expectedUrl', Actual: '$currentUrl'");
+        }
+        return $currentUrl;
+    }
 
     #---------------------------------------------------------
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void

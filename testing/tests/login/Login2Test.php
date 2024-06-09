@@ -6,7 +6,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Testing\Pages\Login\LoginPage2;
 
-class LoginTest extends TestCase
+class Login2Test extends TestCase
 {
     protected $driver;
 
@@ -31,7 +31,7 @@ class LoginTest extends TestCase
         $loginPage->clickLoginButton();
 
         $successlogin = $loginPage->verifyLoginSuccessfull();
-        $this->assertStringContainsString('Logged In Successfully', $successlogin);
+        $this->assertStringContainsString('Products', $successlogin);
     }
     public function testFailedLoginUser(): void
     {
@@ -64,5 +64,7 @@ class LoginTest extends TestCase
         $loginPage->clickLoginButton();
         $loginPage->clickHamburgerMenu();
         $loginPage->clickLogout();
+        $logout= $loginPage->verifyLogout();
+        $this->assertStringContainsString('Accepted usernames are:', $logout);
     }
 }
