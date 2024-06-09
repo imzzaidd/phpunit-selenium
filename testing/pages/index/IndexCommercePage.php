@@ -20,6 +20,8 @@ class IndexCommercePage
     private const CLOSE_HAMBURGER_MENU = "//button[contains(.,'Close Menu')]";
     private const ABOUT_TEXT = "//a[contains(.,'About')]";
     private const LOGOUT_TEXT = "//a[contains(.,'Logout')]";
+    private const ITEM_01 = "//div[@class='inventory_item_name '][contains(.,'Sauce Labs Backpack')]";
+    private const ADD_CART_BTN = "//button[contains(.,'Add to cart')]";
 
     public function __construct(RemoteWebDriver $driver)
     {
@@ -57,7 +59,14 @@ class IndexCommercePage
     {
         $this->clickElement(WebDriverBy::xpath(self::HAMBURGER_MENU));
     }
-
+    public function clickCloseHamburgerMenu(): void
+    {
+        $this->clickElement(WebDriverBy::xpath(self::CLOSE_HAMBURGER_MENU));
+    }
+    public function verifyCloseHamburgerMenu(): string
+    {
+        return $this->getElementText(WebDriverBy::xpath(self::HAMBURGER_MENU));
+    }
     public function verifyClickHambugerMenu(): string
     {
         return $this->getElementText(WebDriverBy::xpath(self::CLOSE_HAMBURGER_MENU));
@@ -96,6 +105,25 @@ class IndexCommercePage
         }
         return $currentUrl;
     }
+
+    public function clickItems(): void
+    {
+        $this->clickElement(WebDriverBy::xpath(self::ITEM_01));
+    }
+    public function verifyItemURL(): string
+    {
+        $currentUrl = $this->driver->getCurrentURL();
+        $expectedUrl = 'https://www.saucedemo.com/inventory-item.html?id=4';
+        if (rtrim($currentUrl, '/') !== rtrim($expectedUrl, '/')) {
+            throw new \Exception("Failed to redirect to the correct URL after clicking 'Items'. Expected: '$expectedUrl', Actual: '$currentUrl'");
+        }
+        return $currentUrl;
+    }
+    public function verifyItemView(): string
+    {
+        return $this->getElementText(WebDriverBy::xpath(self::ADD_CART_BTN));
+    }
+    
 
     #---------------------------------------------------------
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void

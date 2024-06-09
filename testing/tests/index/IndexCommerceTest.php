@@ -21,7 +21,7 @@ class IndexCommerceTest extends TestCase
         }
     }
 
-    private function login(): IndexCommercePage
+    private function testLogin(): IndexCommercePage
     {
         $indexCommercePage = new IndexCommercePage($this->driver);
         $indexCommercePage->open();
@@ -35,20 +35,44 @@ class IndexCommerceTest extends TestCase
     }
     public function testIndex(): void
     {
-        $this->login();
+        $this->testLogin();
     }
 
     public function testHamburgerMenu(): void
     {
-        $indexCommercePage = $this->login();
+        $indexCommercePage = $this->testLogin();
         $indexCommercePage->clickHamburgerMenu();
         $indexCommercePage->verifyClickHambugerMenu();
+    }
+    public function testAboutOption(): void
+    {
+        $indexCommercePage = $this->testLogin();
+        $indexCommercePage->clickHamburgerMenu();
         $indexCommercePage->clickAbout();
         $indexCommercePage->verifyClickAbout();
         $indexCommercePage->backToIndex();
+}
+    public function testLogout(): void
+    {
+        $indexCommercePage = $this->testLogin();
         $indexCommercePage->clickHamburgerMenu();
         $indexCommercePage->clickLogout();
         $indexCommercePage->verifyLogout();
-    
     }
+    public function testCloseHamburgerMenu(): void
+    {
+        $indexCommercePage = $this->testLogin();
+        $indexCommercePage->clickHamburgerMenu();
+        $indexCommercePage->clickCloseHamburgerMenu();
+        $indexCommercePage->verifyCloseHamburgerMenu();
+    }
+
+    public function testItems(): void
+    {
+        $indexCommercePage = $this->testLogin();
+        $indexCommercePage->clickItems();
+        $indexCommercePage->verifyItemURL();
+        $indexCommercePage->verifyItemView();
+    }
+
 }
