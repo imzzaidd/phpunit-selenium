@@ -4,7 +4,7 @@ namespace Testing\Tests\UI;
 use PHPUnit\Framework\TestCase;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Testing\Pages\LoginPage;
+use Testing\Pages\Login\LoginPage;
 
 class LoginTest extends TestCase
 {
