@@ -8,5 +8,8 @@
             "Testing\\Pages\\": "testing/pages/",
             "Testing\\Tests\\": "testing/tests/"
         }
+    },
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
     }
 }

@@ -9,71 +9,90 @@ use Facebook\WebDriver\WebDriverWait;
 class LoginView
 {
     protected $driver;
-    private const URL = 'https://www.saucedemo.com';
-    private const LOGO = "//div[@class='login_logo'][contains(.,'Swag Labs')]";
-    private const USERNAME_FIELD = "//input[contains(@placeholder,'Username')]";
-    private const PASSWORD_FIELD = "//input[contains(@placeholder,'Password')]";
-    private const LOGIN_BUTTON = "//input[@value='Login']";
-    private const SUBTITLE = "//span[@class='title'][contains(.,'Products')]";
-    private const ERROR_MESSAGE = "//h3[contains(@data-test,'error')]";
-    private const HAMBURGER_MENU = "//button[contains(.,'Open Menu')]"; 
-    private const LOGOUT_TEXT = "//a[contains(.,'Logout')]";
-    private const LOGIN_INFO = "//div[contains(@class,'login_credentials_wrap-inner')]";
+    
+    // Variables que serán cargadas desde el .env
+    private $url;
+    private $logo;
+    private $usernameField;
+    private $passwordField;
+    private $loginButton;
+    private $subtitle;
+    private $errorMessage;
+    private $hamburgerMenu;
+    private $logoutText;
+    private $loginInfo;
 
     public function __construct(RemoteWebDriver $driver)
     {
         $this->driver = $driver;
+        
+        // Cargar las variables de entorno
+        $this->url = getenv('URL');
+        $this->logo = getenv('LOGO');
+        $this->usernameField = getenv('USERNAME_FIELD');
+        $this->passwordField = getenv('PASSWORD_FIELD');
+        $this->loginButton = getenv('LOGIN_BUTTON');
+        $this->subtitle = getenv('SUBTITLE');
+        $this->errorMessage = getenv('ERROR_MESSAGE');
+        $this->hamburgerMenu = getenv('HAMBURGER_MENU');
+        $this->logoutText = getenv('LOGOUT_TEXT');
+        $this->loginInfo = getenv('LOGIN_INFO');
     }
+
     public function open(): void
     {
-        $this->driver->get(self::URL);
-        $this->assertCurrentUrl(self::URL);
-        $this->waitForElement(WebDriverBy::xpath(self::LOGO));
+        $this->driver->get($this->url);
+        $this->assertCurrentUrl($this->url);
+        $this->waitForElement(WebDriverBy::xpath($this->logo));
     }
+
     public function setUsername(string $username): void
     {
-        $this->fillField(WebDriverBy::xpath(self::USERNAME_FIELD), $username);
+        $this->fillField(WebDriverBy::xpath($this->usernameField), $username);
     }
 
     public function setPassword(string $password): void
     {
-        $this->fillField(WebDriverBy::xpath(self::PASSWORD_FIELD), $password);
+        $this->fillField(WebDriverBy::xpath($this->passwordField), $password);
     }
-    
+
     public function clickLoginButton(): void
     {
-        $this->clickElement(WebDriverBy::xpath(self::LOGIN_BUTTON));
+        $this->clickElement(WebDriverBy::xpath($this->loginButton));
     }
+
     public function verifyLoginSuccessfull(): string
     {
-        return $this->getElementText(WebDriverBy::xpath(self::SUBTITLE));
+        return $this->getElementText(WebDriverBy::xpath($this->subtitle));
     }
+
     public function verifyLoginFailed(): string
     {
-        return $this->getElementText(WebDriverBy::xpath(self::ERROR_MESSAGE));
+        return $this->getElementText(WebDriverBy::xpath($this->errorMessage));
     }
+
     public function clickHamburgerMenu(): void
     {
-        $this->clickElement(WebDriverBy::xpath(self::HAMBURGER_MENU));
+        $this->clickElement(WebDriverBy::xpath($this->hamburgerMenu));
     }
-    
+
     public function clickLogout(): void
     {
-        $this->clickElement(WebDriverBy::xpath(self::LOGOUT_TEXT));
+        $this->clickElement(WebDriverBy::xpath($this->logoutText));
     }
-    
+
     public function verifyLogout(): string
     {
-        return $this->getElementText(WebDriverBy::xpath(self::LOGIN_INFO));
+        return $this->getElementText(WebDriverBy::xpath($this->loginInfo));
     }
-    
 
-#---------------------------------------------------------
+    // Métodos privados
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
         $wait->until(WebDriverExpectedCondition::presenceOfElementLocated($by));
     }
+
     private function assertCurrentUrl(string $expectedUrl): void
     {
         $currentUrl = rtrim($this->driver->getCurrentURL(), '/');
@@ -83,6 +102,7 @@ class LoginView
             throw new \Exception("Failed to open the correct URL: expected $normalizedExpectedUrl but got $currentUrl");
         }
     }
+
     private function fillField(WebDriverBy $by, string $value): void
     {
         try {
@@ -113,4 +133,5 @@ class LoginView
         }
     }
 }
+
 ?>
