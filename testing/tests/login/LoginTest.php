@@ -4,9 +4,9 @@ namespace Testing\Tests\UI;
 use PHPUnit\Framework\TestCase;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Testing\Pages\Login\LoginPage;
+use Testing\Pages\Login\LoginView;
 
-class LoginTest extends TestCase
+class Login2Test extends TestCase
 {
     protected $driver;
 
@@ -22,41 +22,49 @@ class LoginTest extends TestCase
             $this->driver->quit();
         }
     }
-
     public function testSuccessfulLogin(): void
     {
-        $loginPage = new LoginPage($this->driver);
+        $loginPage = new LoginView($this->driver);
         $loginPage->open();
-        $loginPage->setUsername('student');
-        $loginPage->setPassword('Password123');
+        $loginPage->setUsername('standard_user');
+        $loginPage->setPassword('secret_sauce');
         $loginPage->clickLoginButton();
 
-        $successMessage = $loginPage->getSuccessMessage();
-        $this->assertStringContainsString('Logged In Successfully', $successMessage);
+        $successlogin = $loginPage->verifyLoginSuccessfull();
+        $this->assertStringContainsString('Products', $successlogin);
     }
-
     public function testFailedLoginUser(): void
     {
-        $loginPage = new LoginPage($this->driver);
+        $loginPage = new LoginView($this->driver);
         $loginPage->open();
         $loginPage->setUsername('incorrectUser');
-        $loginPage->setPassword('Password123');
+        $loginPage->setPassword('secret_sauce');
         $loginPage->clickLoginButton();
 
-        $failedMessage = $loginPage->getErrorMessageUser();
-        $this->assertStringContainsString('Your username is invalid!', $failedMessage);
+        $failedlogin = $loginPage->verifyLoginFailed();
+        $this->assertStringContainsString('Username and password do not match any user in this service', $failedlogin);
     }
-
     public function testFailedLoginPassword(): void
     {
-        $loginPage = new LoginPage($this->driver);
+        $loginPage = new LoginView($this->driver);
         $loginPage->open();
-        $loginPage->setUsername('student');
+        $loginPage->setUsername('standard_user');
         $loginPage->setPassword('incorrectPassword');
         $loginPage->clickLoginButton();
 
-        $failedMessage = $loginPage->getErrorMessagePassword();
-        $this->assertStringContainsString('Your password is invalid!', $failedMessage);
+        $failedlogin = $loginPage->verifyLoginFailed();
+        $this->assertStringContainsString('Username and password do not match any user in this service', $failedlogin);
+    }
+    public function testLogOut(): void
+    {
+        $loginPage = new LoginView($this->driver);
+        $loginPage->open();
+        $loginPage->setUsername('standard_user');
+        $loginPage->setPassword('secret_sauce');
+        $loginPage->clickLoginButton();
+        $loginPage->clickHamburgerMenu();
+        $loginPage->clickLogout();
+        $logout= $loginPage->verifyLogout();
+        $this->assertStringContainsString('Accepted usernames are:', $logout);
     }
 }
-?>

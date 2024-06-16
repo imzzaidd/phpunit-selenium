@@ -6,29 +6,30 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverWait;
 
-class LoginPage
+class LoginView
 {
     protected $driver;
-    private const URL = 'https://practicetestautomation.com/practice-test-login/';
-    private const USERNAME_FIELD = "//input[@id='username']";
-    private const PASSWORD_FIELD = "//input[@name='password']";
-    private const LOGIN_BUTTON = "//button[contains(.,'Submit')]";
-    private const SUCCESS_MESSAGE = "//h1[@class='post-title' and contains(text(), 'Logged In Successfully')]";
-    private const ERROR_MESSAGE_USER = "//div[@class='show'][contains(.,'Your username is invalid!')]";
-    private const ERROR_MESSAGE_PASSWORD = "//div[@class='show'][contains(.,'Your password is invalid!')]";
+    private const URL = 'https://www.saucedemo.com';
+    private const LOGO = "//div[@class='login_logo'][contains(.,'Swag Labs')]";
+    private const USERNAME_FIELD = "//input[contains(@placeholder,'Username')]";
+    private const PASSWORD_FIELD = "//input[contains(@placeholder,'Password')]";
+    private const LOGIN_BUTTON = "//input[@value='Login']";
+    private const SUBTITLE = "//span[@class='title'][contains(.,'Products')]";
+    private const ERROR_MESSAGE = "//h3[contains(@data-test,'error')]";
+    private const HAMBURGER_MENU = "//button[contains(.,'Open Menu')]"; 
+    private const LOGOUT_TEXT = "//a[contains(.,'Logout')]";
+    private const LOGIN_INFO = "//div[contains(@class,'login_credentials_wrap-inner')]";
 
     public function __construct(RemoteWebDriver $driver)
     {
         $this->driver = $driver;
     }
-
     public function open(): void
     {
         $this->driver->get(self::URL);
         $this->assertCurrentUrl(self::URL);
-        $this->waitForElement(WebDriverBy::xpath(self::USERNAME_FIELD));
+        $this->waitForElement(WebDriverBy::xpath(self::LOGO));
     }
-
     public function setUsername(string $username): void
     {
         $this->fillField(WebDriverBy::xpath(self::USERNAME_FIELD), $username);
@@ -38,40 +39,50 @@ class LoginPage
     {
         $this->fillField(WebDriverBy::xpath(self::PASSWORD_FIELD), $password);
     }
-
+    
     public function clickLoginButton(): void
     {
         $this->clickElement(WebDriverBy::xpath(self::LOGIN_BUTTON));
     }
-
-    public function getSuccessMessage(): string
+    public function verifyLoginSuccessfull(): string
     {
-        return $this->getElementText(WebDriverBy::xpath(self::SUCCESS_MESSAGE));
+        return $this->getElementText(WebDriverBy::xpath(self::SUBTITLE));
     }
-
-    public function getErrorMessageUser(): string
+    public function verifyLoginFailed(): string
     {
-        return $this->getElementText(WebDriverBy::xpath(self::ERROR_MESSAGE_USER));
+        return $this->getElementText(WebDriverBy::xpath(self::ERROR_MESSAGE));
     }
-
-    public function getErrorMessagePassword(): string
+    public function clickHamburgerMenu(): void
     {
-        return $this->getElementText(WebDriverBy::xpath(self::ERROR_MESSAGE_PASSWORD));
+        $this->clickElement(WebDriverBy::xpath(self::HAMBURGER_MENU));
     }
-
-    private function assertCurrentUrl(string $expectedUrl): void
+    
+    public function clickLogout(): void
     {
-        if ($this->driver->getCurrentURL() !== $expectedUrl) {
-            throw new \Exception("Failed to open the correct URL: expected $expectedUrl but got " . $this->driver->getCurrentURL());
-        }
+        $this->clickElement(WebDriverBy::xpath(self::LOGOUT_TEXT));
     }
+    
+    public function verifyLogout(): string
+    {
+        return $this->getElementText(WebDriverBy::xpath(self::LOGIN_INFO));
+    }
+    
 
+#---------------------------------------------------------
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
         $wait->until(WebDriverExpectedCondition::presenceOfElementLocated($by));
     }
-
+    private function assertCurrentUrl(string $expectedUrl): void
+    {
+        $currentUrl = rtrim($this->driver->getCurrentURL(), '/');
+        $normalizedExpectedUrl = rtrim($expectedUrl, '/');
+        
+        if ($currentUrl !== $normalizedExpectedUrl) {
+            throw new \Exception("Failed to open the correct URL: expected $normalizedExpectedUrl but got $currentUrl");
+        }
+    }
     private function fillField(WebDriverBy $by, string $value): void
     {
         try {
