@@ -55,6 +55,8 @@ services:
       - firefox
     environment:
       - SELENIUM_HUB_URL=http://selenium-hub:4444/wd/hub/status
+    env_file:
+      - .env
     volumes:
       - .:/var/www/html
     entrypoint: ["/usr/local/bin/entrypoint.sh"]
