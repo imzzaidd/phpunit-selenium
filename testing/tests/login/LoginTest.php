@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Testing\Pages\Login\LoginView;
+use Testing\Utils\Login\LoginUtils;
 
 class Login2Test extends TestCase
 {
@@ -29,14 +30,9 @@ class Login2Test extends TestCase
 
     public function testSuccessfulLogin(): void
     {
-        $this->loginPage->open();
-        $this->loginPage->setUsername('standard_user');
-        $this->loginPage->setPassword('secret_sauce');
-        $this->loginPage->clickLoginButton();
-
-        $successlogin = $this->loginPage->verifyLoginSuccessfull();
-        $this->assertStringContainsString('Products', $successlogin);
+        LoginUtils::performSuccessfulLogin($this->loginPage);
     }
+
 
     public function testFailedLoginUser(): void
     {

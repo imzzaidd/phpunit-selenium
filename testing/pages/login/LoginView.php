@@ -82,6 +82,10 @@ class LoginView
     {
         return $this->getConfig('HAMBURGER_MENU');
     }
+    public function getAboutTextXpath(): string
+    {
+        return $this->getConfig('ABOUT_TEXT');
+    }
 
     public function getLogoutTextXpath(): string
     {
@@ -92,6 +96,7 @@ class LoginView
     {
         return $this->getConfig('LOGIN_INFO');
     }
+
 
     // Método para abrir la URL
     public function open(): void
@@ -131,6 +136,12 @@ class LoginView
     {
         $this->clickElement(WebDriverBy::xpath($this->getHamburgerMenuXpath()));
     }
+    public function clickAbout(): void
+    {
+        $this->clickElement(WebDriverBy::xpath($this->getAboutTextXpath()));
+        $this->goBack();
+    }
+
 
     public function clickLogout(): void
     {
@@ -142,7 +153,8 @@ class LoginView
         return $this->getElementText(WebDriverBy::xpath($this->getLoginInfoXpath()));
     }
 
-    // Métodos privados para interacción con WebDriver
+
+#----------------------------------------#
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
@@ -188,5 +200,14 @@ class LoginView
             throw new \Exception("Error al obtener el texto del elemento: " . $e->getMessage());
         }
     }
+    private function goBack(): void
+    {
+        try {
+            $this->driver->navigate()->back();
+        } catch (\Exception $e) {
+            throw new \Exception("Error al intentar regresar a la página anterior: " . $e->getMessage());
+        }
+    }
+
 }
 ?>
