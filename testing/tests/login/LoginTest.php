@@ -9,11 +9,15 @@ use Testing\Pages\Login\LoginView;
 class Login2Test extends TestCase
 {
     protected $driver;
+    protected $loginPage;
 
     protected function setUp(): void
     {
         // Actualiza la URL para Selenium 4
         $this->driver = RemoteWebDriver::create('http://selenium-hub:4444', DesiredCapabilities::chrome());
+
+        // Inicializa la página de login con el driver
+        $this->loginPage = new LoginView($this->driver);
     }
 
     protected function tearDown(): void
@@ -22,49 +26,50 @@ class Login2Test extends TestCase
             $this->driver->quit();
         }
     }
+
     public function testSuccessfulLogin(): void
     {
-        $loginPage = new LoginView($this->driver);
-        $loginPage->open();
-        $loginPage->setUsername('standard_user');
-        $loginPage->setPassword('secret_sauce');
-        $loginPage->clickLoginButton();
+        $this->loginPage->open();
+        $this->loginPage->setUsername('standard_user');
+        $this->loginPage->setPassword('secret_sauce');
+        $this->loginPage->clickLoginButton();
 
-        $successlogin = $loginPage->verifyLoginSuccessfull();
+        $successlogin = $this->loginPage->verifyLoginSuccessfull();
         $this->assertStringContainsString('Products', $successlogin);
     }
+
     public function testFailedLoginUser(): void
     {
-        $loginPage = new LoginView($this->driver);
-        $loginPage->open();
-        $loginPage->setUsername('incorrectUser');
-        $loginPage->setPassword('secret_sauce');
-        $loginPage->clickLoginButton();
+        $this->loginPage->open();
+        $this->loginPage->setUsername('incorrectUser');
+        $this->loginPage->setPassword('secret_sauce');
+        $this->loginPage->clickLoginButton();
 
-        $failedlogin = $loginPage->verifyLoginFailed();
+        $failedlogin = $this->loginPage->verifyLoginFailed();
         $this->assertStringContainsString('Username and password do not match any user in this service', $failedlogin);
     }
+
     public function testFailedLoginPassword(): void
     {
-        $loginPage = new LoginView($this->driver);
-        $loginPage->open();
-        $loginPage->setUsername('standard_user');
-        $loginPage->setPassword('incorrectPassword');
-        $loginPage->clickLoginButton();
+        $this->loginPage->open();
+        $this->loginPage->setUsername('standard_user');
+        $this->loginPage->setPassword('incorrectPassword');
+        $this->loginPage->clickLoginButton();
 
-        $failedlogin = $loginPage->verifyLoginFailed();
+        $failedlogin = $this->loginPage->verifyLoginFailed();
         $this->assertStringContainsString('Username and password do not match any user in this service', $failedlogin);
     }
+
     public function testLogOut(): void
     {
-        $loginPage = new LoginView($this->driver);
-        $loginPage->open();
-        $loginPage->setUsername('standard_user');
-        $loginPage->setPassword('secret_sauce');
-        $loginPage->clickLoginButton();
-        $loginPage->clickHamburgerMenu();
-        $loginPage->clickLogout();
-        $logout= $loginPage->verifyLogout();
+        $this->loginPage->open();
+        $this->loginPage->setUsername('standard_user');
+        $this->loginPage->setPassword('secret_sauce');
+        $this->loginPage->clickLoginButton();
+        $this->loginPage->clickHamburgerMenu();
+        $this->loginPage->clickLogout();
+        $logout = $this->loginPage->verifyLogout();
         $this->assertStringContainsString('Accepted usernames are:', $logout);
     }
 }
+?>

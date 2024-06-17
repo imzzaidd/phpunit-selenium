@@ -7,10 +7,10 @@ while ! curl -sSf $SELENIUM_HUB_URL > /dev/null; do
 done
 
 # Cargar las variables de entorno desde .env
-if [ -f /var/www/html/.env ]; then
+if [ -f /var/www/html/config.php ]; then
   set -a
   # Leer y exportar las variables de entorno
-  . /var/www/html/.env
+  . /var/www/html/config.php 
   set +a
 fi
 

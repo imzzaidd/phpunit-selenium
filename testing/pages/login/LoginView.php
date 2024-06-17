@@ -10,83 +10,139 @@ class LoginView
 {
     protected $driver;
     
-    // Variables que serán cargadas desde el .env
-    private $url;
-    private $logo;
-    private $usernameField;
-    private $passwordField;
-    private $loginButton;
-    private $subtitle;
-    private $errorMessage;
-    private $hamburgerMenu;
-    private $logoutText;
-    private $loginInfo;
+    // Variables de configuración
+    private $config;
 
     public function __construct(RemoteWebDriver $driver)
     {
         $this->driver = $driver;
-        
-        // Cargar las variables de entorno
-        $this->url = getenv('URL');
-        $this->logo = getenv('LOGO');
-        $this->usernameField = getenv('USERNAME_FIELD');
-        $this->passwordField = getenv('PASSWORD_FIELD');
-        $this->loginButton = getenv('LOGIN_BUTTON');
-        $this->subtitle = getenv('SUBTITLE');
-        $this->errorMessage = getenv('ERROR_MESSAGE');
-        $this->hamburgerMenu = getenv('HAMBURGER_MENU');
-        $this->logoutText = getenv('LOGOUT_TEXT');
-        $this->loginInfo = getenv('LOGIN_INFO');
+        $this->loadConfig();
     }
 
+    private function loadConfig(): void
+    {
+        // Ruta al archivo de configuración
+        $configPath = './config/config.php';
+
+        // Cargar configuraciones desde el archivo
+        if (file_exists($configPath) && is_readable($configPath)) {
+            $this->config = require $configPath;
+        } else {
+            throw new \Exception("No se puede cargar el archivo de configuración: $configPath");
+        }
+    }
+
+    // Método para obtener una configuración específica
+    private function getConfig(string $key): string
+    {
+        if (isset($this->config[$key])) {
+            return $this->config[$key];
+        } else {
+            throw new \Exception("La clave de configuración '$key' no está definida en el archivo de configuración");
+        }
+    }
+
+    // Métodos para obtener las configuraciones específicas
+    public function getUrl(): string
+    {
+        return $this->getConfig('URL');
+    }
+
+    public function getLogoXpath(): string
+    {
+        return $this->getConfig('LOGO');
+    }
+
+    public function getUsernameFieldXpath(): string
+    {
+        return $this->getConfig('USERNAME_FIELD');
+    }
+
+    public function getPasswordFieldXpath(): string
+    {
+        return $this->getConfig('PASSWORD_FIELD');
+    }
+
+    public function getLoginButtonXpath(): string
+    {
+        return $this->getConfig('LOGIN_BUTTON');
+    }
+
+    public function getSubtitleXpath(): string
+    {
+        return $this->getConfig('SUBTITLE');
+    }
+
+    public function getErrorMessageXpath(): string
+    {
+        return $this->getConfig('ERROR_MESSAGE');
+    }
+
+    public function getHamburgerMenuXpath(): string
+    {
+        return $this->getConfig('HAMBURGER_MENU');
+    }
+
+    public function getLogoutTextXpath(): string
+    {
+        return $this->getConfig('LOGOUT_TEXT');
+    }
+
+    public function getLoginInfoXpath(): string
+    {
+        return $this->getConfig('LOGIN_INFO');
+    }
+
+    // Método para abrir la URL
     public function open(): void
     {
-        $this->driver->get($this->url);
-        $this->assertCurrentUrl($this->url);
-        $this->waitForElement(WebDriverBy::xpath($this->logo));
+        $this->driver->get($this->getUrl());
+        $this->assertCurrentUrl($this->getUrl());
+        $this->waitForElement(WebDriverBy::xpath($this->getLogoXpath()));
     }
 
+    // Métodos para interactuar con los elementos de la página
     public function setUsername(string $username): void
     {
-        $this->fillField(WebDriverBy::xpath($this->usernameField), $username);
+        $this->fillField(WebDriverBy::xpath($this->getUsernameFieldXpath()), $username);
     }
 
     public function setPassword(string $password): void
     {
-        $this->fillField(WebDriverBy::xpath($this->passwordField), $password);
+        $this->fillField(WebDriverBy::xpath($this->getPasswordFieldXpath()), $password);
     }
 
     public function clickLoginButton(): void
     {
-        $this->clickElement(WebDriverBy::xpath($this->loginButton));
+        $this->clickElement(WebDriverBy::xpath($this->getLoginButtonXpath()));
     }
 
     public function verifyLoginSuccessfull(): string
     {
-        return $this->getElementText(WebDriverBy::xpath($this->subtitle));
+        return $this->getElementText(WebDriverBy::xpath($this->getSubtitleXpath()));
     }
 
     public function verifyLoginFailed(): string
     {
-        return $this->getElementText(WebDriverBy::xpath($this->errorMessage));
+        return $this->getElementText(WebDriverBy::xpath($this->getErrorMessageXpath()));
     }
 
     public function clickHamburgerMenu(): void
     {
-        $this->clickElement(WebDriverBy::xpath($this->hamburgerMenu));
+        $this->clickElement(WebDriverBy::xpath($this->getHamburgerMenuXpath()));
     }
 
     public function clickLogout(): void
     {
-        $this->clickElement(WebDriverBy::xpath($this->logoutText));
+        $this->clickElement(WebDriverBy::xpath($this->getLogoutTextXpath()));
     }
 
     public function verifyLogout(): string
     {
-        return $this->getElementText(WebDriverBy::xpath($this->loginInfo));
+        return $this->getElementText(WebDriverBy::xpath($this->getLoginInfoXpath()));
     }
 
-    // Métodos privados
+    // Métodos privados para interacción con WebDriver
     private function waitForElement(WebDriverBy $by, int $timeout = 10): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
@@ -99,7 +155,7 @@ class LoginView
         $normalizedExpectedUrl = rtrim($expectedUrl, '/');
         
         if ($currentUrl !== $normalizedExpectedUrl) {
-            throw new \Exception("Failed to open the correct URL: expected $normalizedExpectedUrl but got $currentUrl");
+            throw new \Exception("No se pudo abrir la URL correcta: se esperaba $normalizedExpectedUrl pero se obtuvo $currentUrl");
         }
     }
 
@@ -110,7 +166,7 @@ class LoginView
             $element->clear();
             $element->sendKeys($value);
         } catch (\Exception $e) {
-            throw new \Exception("Failed to fill field: " . $e->getMessage());
+            throw new \Exception("Error al completar el campo: " . $e->getMessage());
         }
     }
 
@@ -119,7 +175,7 @@ class LoginView
         try {
             $this->driver->findElement($by)->click();
         } catch (\Exception $e) {
-            throw new \Exception("Failed to click element: " . $e->getMessage());
+            throw new \Exception("Error al hacer clic en el elemento: " . $e->getMessage());
         }
     }
 
@@ -129,9 +185,8 @@ class LoginView
             $this->waitForElement($by);
             return $this->driver->findElement($by)->getText();
         } catch (\Exception $e) {
-            throw new \Exception("Failed to get element text: " . $e->getMessage());
+            throw new \Exception("Error al obtener el texto del elemento: " . $e->getMessage());
         }
     }
 }
-
 ?>
