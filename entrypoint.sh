@@ -6,12 +6,10 @@ while ! curl -sSf $SELENIUM_HUB_URL > /dev/null; do
     sleep 10
 done
 
-# Cargar las variables de entorno desde .env
-if [ -f /var/www/html/config.php ]; then
-  set -a
-  # Leer y exportar las variables de entorno
-  . /var/www/html/config.php 
-  set +a
+# Cargar las variables de entorno desde .env si existe el archivo
+if [ -f ./.env ]; then
+  # Cargar las variables de entorno desde .env utilizando el comando `dotenv`
+  eval $(dotenv -f ./.env)
 fi
 
 vendor/bin/phpunit --configuration phpunit.xml --testsuite "UI Tests"

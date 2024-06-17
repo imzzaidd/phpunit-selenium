@@ -6,7 +6,9 @@
     "autoload": {
         "psr-4": {
             "Testing\\Pages\\": "testing/pages/",
-            "Testing\\Tests\\": "testing/tests/"
+            "Testing\\Tests\\": "testing/tests/",
+            "Testing\\Utils\\": "testing/utils/"
+        
         }
     },
     "require": {
