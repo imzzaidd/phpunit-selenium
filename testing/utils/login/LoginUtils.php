@@ -8,13 +8,15 @@ class LoginUtils
 {
     public static function performSuccessfulLogin(LoginView $loginPage): void
     {
+        $loginPage->loadConfig(); 
+        $username = $loginPage->getConfig('VALID_USER');
+        $password = $loginPage->getConfig('VALID_PASSWORD');
         $loginPage->open();
-        $loginPage->setUsername('standard_user');
-        $loginPage->setPassword('secret_sauce');
+        $loginPage->setUsername($username);
+        $loginPage->setPassword($password);
         $loginPage->clickLoginButton();
         $successlogin = $loginPage->verifyLoginSuccessfull();
 
-        // Assert that the success message contains 'Products'
         Assert::assertStringContainsString('Products', $successlogin, 'Login failed. Expected "Products" message not found.');
     }
 }

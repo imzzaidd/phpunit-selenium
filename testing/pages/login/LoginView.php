@@ -19,21 +19,18 @@ class LoginView
         $this->loadConfig();
     }
 
-    private function loadConfig(): void
+    public function loadConfig(): void  
     {
-        // Ruta al archivo de configuración
+
         $configPath = './config/config.php';
 
-        // Cargar configuraciones desde el archivo
         if (file_exists($configPath) && is_readable($configPath)) {
             $this->config = require $configPath;
         } else {
             throw new \Exception("No se puede cargar el archivo de configuración: $configPath");
         }
     }
-
-    // Método para obtener una configuración específica
-    private function getConfig(string $key): string
+    public function getConfig(string $key): string  
     {
         if (isset($this->config[$key])) {
             return $this->config[$key];
@@ -41,8 +38,8 @@ class LoginView
             throw new \Exception("La clave de configuración '$key' no está definida en el archivo de configuración");
         }
     }
-
-    // Métodos para obtener las configuraciones específicas
+#----------------------------------------#
+    
     public function getUrl(): string
     {
         return $this->getConfig('URL');
@@ -155,7 +152,7 @@ class LoginView
 
 
 #----------------------------------------#
-    private function waitForElement(WebDriverBy $by, int $timeout = 10): void
+    private function waitForElement(WebDriverBy $by, int $timeout = 17): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
         $wait->until(WebDriverExpectedCondition::presenceOfElementLocated($by));
