@@ -1,11 +1,12 @@
 <?php
-namespace Testing\Tests\UI;
+namespace Testing\Tests\Login;
 
 use PHPUnit\Framework\TestCase;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Testing\Pages\Login\LoginView;
-use Testing\Utils\Login\LoginUtils;
+use Testing\Utils\login\LoginUtils;
+
 
 class Login2Test extends TestCase
 {

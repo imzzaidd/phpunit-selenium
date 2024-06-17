@@ -1,7 +1,8 @@
 <?php
-namespace Testing\Utils\Login;
+namespace Testing\Utils\login;
 
 use Testing\Pages\Login\LoginView;
+use PHPUnit\Framework\Assert;
 
 class LoginUtils
 {
@@ -12,9 +13,9 @@ class LoginUtils
         $loginPage->setPassword('secret_sauce');
         $loginPage->clickLoginButton();
         $successlogin = $loginPage->verifyLoginSuccessfull();
-        if (strpos($successlogin, 'Products') === false) {
-            throw new \Exception('Login failed.');
-        }
+
+        // Assert that the success message contains 'Products'
+        Assert::assertStringContainsString('Products', $successlogin, 'Login failed. Expected "Products" message not found.');
     }
 }
 ?>
