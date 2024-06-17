@@ -19,21 +19,18 @@ class LoginView
         $this->loadConfig();
     }
 
-    private function loadConfig(): void
+    public function loadConfig(): void  
     {
-        // Ruta al archivo de configuración
+
         $configPath = './config/config.php';
 
-        // Cargar configuraciones desde el archivo
         if (file_exists($configPath) && is_readable($configPath)) {
             $this->config = require $configPath;
         } else {
             throw new \Exception("No se puede cargar el archivo de configuración: $configPath");
         }
     }
-
-    // Método para obtener una configuración específica
-    private function getConfig(string $key): string
+    public function getConfig(string $key): string  
     {
         if (isset($this->config[$key])) {
             return $this->config[$key];
@@ -41,8 +38,8 @@ class LoginView
             throw new \Exception("La clave de configuración '$key' no está definida en el archivo de configuración");
         }
     }
-
-    // Métodos para obtener las configuraciones específicas
+#----------------------------------------#
+    
     public function getUrl(): string
     {
         return $this->getConfig('URL');
@@ -82,6 +79,10 @@ class LoginView
     {
         return $this->getConfig('HAMBURGER_MENU');
     }
+    public function getAboutTextXpath(): string
+    {
+        return $this->getConfig('ABOUT_TEXT');
+    }
 
     public function getLogoutTextXpath(): string
     {
@@ -92,6 +93,13 @@ class LoginView
     {
         return $this->getConfig('LOGIN_INFO');
     }
+
+    public function getEmptyMessage(): string
+    {
+        return $this->getConfig('EMPTY_MESSAGE');
+    }
+
+
 
     // Método para abrir la URL
     public function open(): void
@@ -131,6 +139,12 @@ class LoginView
     {
         $this->clickElement(WebDriverBy::xpath($this->getHamburgerMenuXpath()));
     }
+    public function clickAbout(): void
+    {
+        $this->clickElement(WebDriverBy::xpath($this->getAboutTextXpath()));
+        $this->goBack();
+    }
+
 
     public function clickLogout(): void
     {
@@ -141,9 +155,16 @@ class LoginView
     {
         return $this->getElementText(WebDriverBy::xpath($this->getLoginInfoXpath()));
     }
+    
+    public function verifyEmptyMessage(): string
+    {
+        return $this->getElementText(WebDriverBy::xpath($this->getEmptyMessage()));
+    }
 
-    // Métodos privados para interacción con WebDriver
-    private function waitForElement(WebDriverBy $by, int $timeout = 10): void
+    
+
+#----------------------------------------#
+    private function waitForElement(WebDriverBy $by, int $timeout = 17): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
         $wait->until(WebDriverExpectedCondition::presenceOfElementLocated($by));
@@ -188,5 +209,14 @@ class LoginView
             throw new \Exception("Error al obtener el texto del elemento: " . $e->getMessage());
         }
     }
+    private function goBack(): void
+    {
+        try {
+            $this->driver->navigate()->back();
+        } catch (\Exception $e) {
+            throw new \Exception("Error al intentar regresar a la página anterior: " . $e->getMessage());
+        }
+    }
+
 }
 ?>
