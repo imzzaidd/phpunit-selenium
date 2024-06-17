@@ -94,6 +94,12 @@ class LoginView
         return $this->getConfig('LOGIN_INFO');
     }
 
+    public function getEmptyMessage(): string
+    {
+        return $this->getConfig('EMPTY_MESSAGE');
+    }
+
+
 
     // Método para abrir la URL
     public function open(): void
@@ -149,7 +155,13 @@ class LoginView
     {
         return $this->getElementText(WebDriverBy::xpath($this->getLoginInfoXpath()));
     }
+    
+    public function verifyEmptyMessage(): string
+    {
+        return $this->getElementText(WebDriverBy::xpath($this->getEmptyMessage()));
+    }
 
+    
 
 #----------------------------------------#
     private function waitForElement(WebDriverBy $by, int $timeout = 17): void
