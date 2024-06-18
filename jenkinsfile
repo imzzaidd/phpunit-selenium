@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/imzzaidd/phpunit-selenium'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Construir la imagen de Docker
+                    sh 'docker-compose build'
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Levantar los servicios con docker-compose
+                    sh 'docker-compose up -d'
+
+                    // Esperar a que los servicios estén listos
+                    sleep time: 10, unit: 'SECONDS'
+
+                    // Ejecutar pruebas PHPUnit dentro del contenedor
+                    sh 'docker-compose run --rm phpunit'
+                }
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Detener y eliminar los contenedores de Docker
+                    sh 'docker-compose down'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Limpiar cualquier contenedor o red huérfana
+                sh 'docker system prune -f'
+            }
+        }
+    }
+}
