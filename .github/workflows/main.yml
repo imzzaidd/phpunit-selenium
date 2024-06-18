@@ -1,0 +1,24 @@
+name: Run PHPUnit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build and run PHPUnit
+        run: |
+          docker-compose up --abort-on-container-exit --exit-code-from phpunit
+
+      - name: Stop Docker services
+        run: docker-compose down -v
