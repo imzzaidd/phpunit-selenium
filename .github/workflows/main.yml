@@ -43,15 +43,8 @@ jobs:
       - name: Build and run Docker containers
         run: |
           docker-compose up --detach --build
-
-      - name: Install Composer dependencies
-        run: |
-          docker-compose run --rm phpunit composer install --no-scripts --no-autoloader
-
-      - name: Run PHPUnit tests
-        run: |
-          docker-compose run --rm phpunit vendor/bin/phpunit --testsuite=selenium
+          docker-compose ps
+          docker-compose exec phpunit vendor/bin/phpunit --testsuite=selenium
 
       - name: Stop Docker services
         run: docker-compose down -v
-
