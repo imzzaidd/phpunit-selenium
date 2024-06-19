@@ -46,7 +46,7 @@ jobs:
 
       - name: Run PHPUnit tests
         run: |
-          docker-compose exec phpunit vendor/bin/phpunit --testsuite=selenium
+          docker-compose run --rm phpunit vendor/bin/phpunit --testsuite=selenium
 
       - name: Stop Docker services
         run: docker-compose down -v
