@@ -40,8 +40,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Start Docker containers
+        run: docker-compose up -d
+
+      - name: Check Docker containers
+        run: docker-compose ps
+
       - name: Build and run Docker containers
         run: docker-compose up --abort-on-container-exit --exit-code-from phpunit
 
       - name: Stop Docker services
         run: docker-compose down -v
+
+      - name: Check Composer autoload
+        run: |
+          composer install --no-scripts --no-interaction
+          composer dump-autoload --optimize --no-scripts --no-dev
