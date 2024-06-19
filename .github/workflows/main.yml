@@ -12,9 +12,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      selenium-hub:
+        image: selenium/hub:4.20.0-20240505
+        ports:
+          - "4442:4442"
+          - "4443:4443"
+          - "4444:4444"
+
+      chrome:
+        image: selenium/node-chrome:4.20.0-20240505
+        ports:
+          - "6900:5900"
+        options: --shm-size=2g
+
+      edge:
+        image: selenium/node-edge:4.20.0-20240505
+        ports:
+          - "6901:5900"
+        options: --shm-size=2g
+
+      firefox:
+        image: selenium/node-firefox:4.20.0-20240505
+        ports:
+          - "6902:5900"
+        options: --shm-size=2g
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Create .env file
         run: |
@@ -37,14 +66,11 @@ jobs:
           echo "LOGIN_INFO=${{ secrets.LOGIN_INFO }}" >> .env
           cat .env
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
       - name: Build and run Docker containers
-        run: |
-          docker-compose up --detach --build
-          docker-compose ps
-          docker-compose exec phpunit vendor/bin/phpunit --testsuite=selenium
+        run: docker-compose up --abort-on-container-exit --exit-code-from phpunit
+
+      - name: Run PHPUnit tests
+        run: docker-compose exec phpunit vendor/bin/phpunit --testsuite=selenium
 
       - name: Stop Docker services
         run: docker-compose down -v
