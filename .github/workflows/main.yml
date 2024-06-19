@@ -16,6 +16,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Create .env file
+        run: |
+          echo "URL=${{ secrets.URL }}" >> .env
+          echo "LOGO=${{ secrets.LOGO }}" >> .env
+          echo "PRODUCTS=${{ secrets.PRODUCTS }}" >> .env
+          echo "USERNAME_FIELD=${{ secrets.USERNAME_FIELD }}" >> .env
+          echo "PASSWORD_FIELD=${{ secrets.PASSWORD_FIELD }}" >> .env
+          echo "VALID_USER=${{ secrets.VALID_USER }}" >> .env
+          echo "VALID_PASSWORD=${{ secrets.VALID_PASSWORD }}" >> .env
+          echo "INVALID_USER=${{ secrets.INVALID_USER }}" >> .env
+          echo "INVALID_PASSWORD=${{ secrets.INVALID_PASSWORD }}" >> .env
+          echo "LOGIN_BUTTON=${{ secrets.LOGIN_BUTTON }}" >> .env
+          echo "SUBTITLE=${{ secrets.SUBTITLE }}" >> .env
+          echo "ERROR_MESSAGE=${{ secrets.ERROR_MESSAGE }}" >> .env
+          echo "EMPTY_MESSAGE=${{ secrets.EMPTY_MESSAGE }}" >> .env
+          echo "HAMBURGER_MENU=${{ secrets.HAMBURGER_MENU }}" >> .env
+          echo "ABOUT_TEXT=${{ secrets.ABOUT_TEXT }}" >> .env
+          echo "LOGOUT_TEXT=${{ secrets.LOGOUT_TEXT }}" >> .env
+          echo "LOGIN_INFO=${{ secrets.LOGIN_INFO }}" >> .env
+          cat .env
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
