@@ -1,4 +1,4 @@
-name: Run PHPUnit
+name: Build and Run PHPUnit
 
 on:
   push:
@@ -16,9 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build and run PHPUnit
-        run: |
-          docker-compose up --abort-on-container-exit --exit-code-from phpunit
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and run Docker containers
+        run: docker-compose up --abort-on-container-exit --exit-code-from phpunit
 
       - name: Stop Docker services
         run: docker-compose down -v
