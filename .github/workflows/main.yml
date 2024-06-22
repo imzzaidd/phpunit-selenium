@@ -1,4 +1,4 @@
-name: Build and Run PHPUnit
+name: PHPUnit Tests with Selenium
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Build and run Docker containers
         run: |
-          docker-compose up --detach --build
+          docker-compose up -d --build
           docker-compose ps
           docker-compose exec -T phpunit vendor/bin/phpunit --testsuite=selenium
 
