@@ -1,36 +1,20 @@
 #!/usr/bin/env bash
-set -e
+host="$1"
+port="$2"
+timeout="${3:-30}"
 
-TIMEOUT=15
-
-while getopts "t:" opt; do
-  case ${opt} in
-    t )
-      TIMEOUT=$OPTARG
-      ;;
-    \? )
-      echo "Invalid option: $OPTARG" 1>&2
-      exit 1
-      ;;
-  esac
-done
-shift $((OPTIND -1))
-
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 [-t timeout] host:port"
+if [ -z "$host" ] || [ -z "$port" ]; then
+  echo "Usage: $0 host port [timeout]"
   exit 1
 fi
 
-HOSTPORT=$1
-HOST=$(echo "$HOSTPORT" | cut -d : -f 1)
-PORT=$(echo "$HOSTPORT" | cut -d : -f 2)
-
-for i in $(seq $TIMEOUT); do
-  if nc -z "$HOST" "$PORT"; then
+for i in $(seq $timeout); do
+  if curl --silent --head "http://$host:$port" | grep "200 OK" > /dev/null; then
+    echo "Selenium Hub is up"
     exit 0
   fi
   sleep 1
 done
 
-echo "Timeout occurred after waiting $TIMEOUT seconds for $HOST:$PORT"
+echo "Timeout occurred after waiting $timeout seconds for $host:$port"
 exit 1
