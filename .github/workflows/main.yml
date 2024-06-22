@@ -44,7 +44,7 @@ jobs:
         run: |
           docker-compose up --detach --build
           docker-compose ps
-          docker-compose exec -T phpunit vendor/bin/phpunit --configuration phpunit-selenium/phpunit.xml
+          docker-compose exec -T phpunit vendor/bin/phpunit --configuration phpunit.xml
 
       - name: Stop Docker services
         run: docker-compose down -v
