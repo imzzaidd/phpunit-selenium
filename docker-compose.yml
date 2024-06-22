@@ -60,3 +60,4 @@ services:
     volumes:
       - .:/var/www/html
     entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    command: ["vendor/bin/phpunit", "--configuration", "/var/www/html/phpunit-selenium/phpunit.xml"]

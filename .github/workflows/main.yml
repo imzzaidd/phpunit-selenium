@@ -16,7 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create .env file
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and run Docker containers
         run: |
           echo "URL=${{ secrets.URL }}" >> .env
           echo "LOGO=${{ secrets.LOGO }}" >> .env
@@ -37,41 +40,4 @@ jobs:
           echo "LOGIN_INFO=${{ secrets.LOGIN_INFO }}" >> .env
           cat .env
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and run Docker containers
-        run: |
-          docker-compose up --detach --build
-          cat << 'EOF' > wait-for-it.sh
-          #!/usr/bin/env bash
-          host="$1"
-          port="$2"
-          timeout="${3:-30}"
-
-          if [ -z "$host" ] || [ -z "$port" ]; then
-            echo "Usage: $0 host port [timeout]"
-            exit 1
-          fi
-
-          for i in $(seq $timeout); do
-            if nc -z $host $port; then
-              if curl --silent --head "http://$host:$port" | grep "200 OK" > /dev/null; then
-                echo "Selenium Hub is up"
-                exit 0
-              fi
-            fi
-            sleep 1
-          done
-
-          echo "Timeout occurred after waiting $timeout seconds for $host:$port"
-          exit 1
-          EOF
-
-          chmod +x wait-for-it.sh
-          ./wait-for-it.sh selenium-hub 4444 30
-          docker-compose ps
-          docker-compose exec -T phpunit vendor/bin/phpunit --configuration phpunit-selenium/phpunit.xml
-
-      - name: Stop Docker services
-        run: docker-compose down -v
+          docker-compose up --build --exit-code-from phpunit
