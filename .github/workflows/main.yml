@@ -40,17 +40,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Stop previous containers (if any)
-        run: docker-compose down -v
-
       - name: Build and run Docker containers
         run: |
-          docker-compose pull
-          docker-compose build --pull
-          docker-compose up --abort-on-container-exit --exit-code-from phpunit
-
-      - name: Execute PHPUnit tests
-        run: docker-compose exec phpunit vendor/bin/phpunit --testsuite=selenium
+          docker-compose up --detach --build
+          docker-compose ps
+          docker-compose exec -T phpunit vendor/bin/phpunit --configuration phpunit-selenium/phpunit.xml
 
       - name: Stop Docker services
         run: docker-compose down -v
