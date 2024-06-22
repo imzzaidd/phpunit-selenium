@@ -9,9 +9,11 @@ if [ -z "$host" ] || [ -z "$port" ]; then
 fi
 
 for i in $(seq $timeout); do
-  if curl --silent --head "http://$host:$port" | grep "200 OK" > /dev/null; then
-    echo "Selenium Hub is up"
-    exit 0
+  if nc -z $host $port; then
+    if curl --silent --head "http://$host:$port" | grep "200 OK" > /dev/null; then
+      echo "Selenium Hub is up"
+      exit 0
+    fi
   fi
   sleep 1
 done
