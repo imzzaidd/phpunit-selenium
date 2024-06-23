@@ -1,58 +1,14 @@
 pipeline {
-    agent any
-
-    environment {
-        COMPOSE_FILE = 'docker-compose.yml'
+  agent { dockerfile true }
+  stages {
+    stage('Test') {
+      steps {
+        sh '''
+          node --version
+          git --version
+          curl --version
+        '''
+      }
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                // Obtiene el código fuente del proyecto
-                git 'https://github.com/imzzaidd/phpunit-selenium.git'
-            }
-        }
-
-        stage('Build and Start Containers') {
-            steps {
-                script {
-                    // Construye y levanta los servicios definidos en docker-compose.yml
-                    sh 'docker-compose up -d --build'
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Ejecuta las pruebas en el servicio phpunit
-                    sh 'docker-compose run phpunit'
-                }
-            }
-        }
-
-        stage('Stop and Remove Containers') {
-            steps {
-                script {
-                    // Detiene y elimina los contenedores y redes creados por docker-compose
-                    sh 'docker-compose down'
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Limpia cualquier contenedor y recursos sobrantes en caso de fallo
-            script {
-                sh 'docker-compose down --volumes --remove-orphans'
-            }
-        }
-        success {
-            echo 'Tests completed successfully.'
-        }
-        failure {
-            echo 'Tests failed.'
-        }
-    }
+  }
 }
