@@ -1,16 +1,79 @@
-pipeline{
-    agent {
-        docker {
-            image 'node:16-alpine'
-        }
+pipeline {
+    agent any
+    
+    environment {
+        SELENIUM_HUB_URL = 'http://selenium-hub:4444/wd/hub/status'
     }
+    
     stages {
-        stage('Test') {
+        stage('Checkout') {
             steps {
-                sh 'node --version'
+                checkout scm
+            }
+        }
+        
+        stage('Prepare .env file') {
+            steps {
+                script {
+                    sh """
+                    echo "URL=\${URL}" > .env
+                    echo "LOGO=\${LOGO}" >> .env
+                    echo "PRODUCTS=\${PRODUCTS}" >> .env
+                    echo "USERNAME_FIELD=\${USERNAME_FIELD}" >> .env
+                    echo "PASSWORD_FIELD=\${PASSWORD_FIELD}" >> .env
+                    echo "VALID_USER=\${VALID_USER}" >> .env
+                    echo "VALID_PASSWORD=\${VALID_PASSWORD}" >> .env
+                    echo "INVALID_USER=\${INVALID_USER}" >> .env
+                    echo "INVALID_PASSWORD=\${INVALID_PASSWORD}" >> .env
+                    echo "LOGIN_BUTTON=\${LOGIN_BUTTON}" >> .env
+                    echo "SUBTITLE=\${SUBTITLE}" >> .env
+                    echo "ERROR_MESSAGE=\${ERROR_MESSAGE}" >> .env
+                    echo "EMPTY_MESSAGE=\${EMPTY_MESSAGE}" >> .env
+                    echo "HAMBURGER_MENU=\${HAMBURGER_MENU}" >> .env
+                    echo "ABOUT_TEXT=\${ABOUT_TEXT}" >> .env
+                    echo "LOGOUT_TEXT=\${LOGOUT_TEXT}" >> .env
+                    echo "LOGIN_INFO=\${LOGIN_INFO}" >> .env
+                    cat .env
+                    """
+                }
+            }
+        }
+        
+        stage('Build and run Docker containers') {
+            steps {
+                script {
+                    docker.build('my-phpunit-selenium-image', '.')
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image('my-phpunit-selenium-image').push('latest')
+                    }
+                }
+            }
+        }
+        
+        stage('Run PHPUnit tests') {
+            steps {
+                script {
+                    docker.image('my-phpunit-selenium-image').withRun('-v $PWD:/var/www/html --env-file .env') { c ->
+                        sh "docker exec ${c.id} vendor/bin/phpunit --configuration /var/www/html/phpunit-selenium/phpunit.xml --testsuite 'UI Tests'"
+                    }
+                }
+            }
+        }
+        
+        stage('List files for debugging') {
+            steps {
+                script {
+                    docker.image('my-phpunit-selenium-image').inside {
+                        sh 'ls -R /var/www/html'
+                    }
+                }
             }
         }
     }
-
-
+    
+    post {
+        always {
+            // Clean up Docker containers if needed
+        }
+    }
 }
