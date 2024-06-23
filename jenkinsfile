@@ -1,79 +1,72 @@
 pipeline {
     agent any
-    
+
     environment {
         SELENIUM_HUB_URL = 'http://selenium-hub:4444/wd/hub/status'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/imzzaidd/phpunit-selenium'
             }
         }
-        
-        stage('Prepare .env file') {
+
+        stage('Prepare Environment') {
             steps {
                 script {
-                    sh """
-                    echo "URL=\${URL}" > .env
-                    echo "LOGO=\${LOGO}" >> .env
-                    echo "PRODUCTS=\${PRODUCTS}" >> .env
-                    echo "USERNAME_FIELD=\${USERNAME_FIELD}" >> .env
-                    echo "PASSWORD_FIELD=\${PASSWORD_FIELD}" >> .env
-                    echo "VALID_USER=\${VALID_USER}" >> .env
-                    echo "VALID_PASSWORD=\${VALID_PASSWORD}" >> .env
-                    echo "INVALID_USER=\${INVALID_USER}" >> .env
-                    echo "INVALID_PASSWORD=\${INVALID_PASSWORD}" >> .env
-                    echo "LOGIN_BUTTON=\${LOGIN_BUTTON}" >> .env
-                    echo "SUBTITLE=\${SUBTITLE}" >> .env
-                    echo "ERROR_MESSAGE=\${ERROR_MESSAGE}" >> .env
-                    echo "EMPTY_MESSAGE=\${EMPTY_MESSAGE}" >> .env
-                    echo "HAMBURGER_MENU=\${HAMBURGER_MENU}" >> .env
-                    echo "ABOUT_TEXT=\${ABOUT_TEXT}" >> .env
-                    echo "LOGOUT_TEXT=\${LOGOUT_TEXT}" >> .env
-                    echo "LOGIN_INFO=\${LOGIN_INFO}" >> .env
-                    cat .env
-                    """
+                    def envVars = [
+                        "URL=${env.URL}",
+                        "LOGO=${env.LOGO}",
+                        "USERNAME_FIELD=${env.USERNAME_FIELD}",
+                        "PASSWORD_FIELD=${env.PASSWORD_FIELD}",
+                        "VALID_USER=${env.VALID_USER}",
+                        "VALID_PASSWORD=${env.VALID_PASSWORD}",
+                        "INVALID_USER=${env.INVALID_USER}",
+                        "INVALID_PASSWORD=${env.INVALID_PASSWORD}",
+                        "LOGIN_BUTTON=${env.LOGIN_BUTTON}",
+                        "SUBTITLE=${env.SUBTITLE}",
+                        "ERROR_MESSAGE=${env.ERROR_MESSAGE}",
+                        "EMPTY_MESSAGE=${env.EMPTY_MESSAGE}",
+                        "HAMBURGER_MENU=${env.HAMBURGER_MENU}",
+                        "ABOUT_TEXT=${env.ABOUT_TEXT}",
+                        "LOGOUT_TEXT=${env.LOGOUT_TEXT}",
+                        "LOGIN_INFO=${env.LOGIN_INFO}"
+                    ]
+
+                    writeFile file: '.env', text: envVars.join('\n')
                 }
             }
         }
-        
-        stage('Build and run Docker containers') {
+
+        stage('Build and Run Docker Containers') {
             steps {
                 script {
-                    docker.build('my-phpunit-selenium-image', '.')
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image('my-phpunit-selenium-image').push('latest')
-                    }
+                    sh 'docker-compose up --build --exit-code-from phpunit'
                 }
             }
         }
-        
-        stage('Run PHPUnit tests') {
+
+        stage('List Files for Debugging') {
             steps {
                 script {
-                    docker.image('my-phpunit-selenium-image').withRun('-v $PWD:/var/www/html --env-file .env') { c ->
-                        sh "docker exec ${c.id} vendor/bin/phpunit --configuration /var/www/html/phpunit-selenium/phpunit.xml --testsuite 'UI Tests'"
-                    }
-                }
-            }
-        }
-        
-        stage('List files for debugging') {
-            steps {
-                script {
-                    docker.image('my-phpunit-selenium-image').inside {
-                        sh 'ls -R /var/www/html'
-                    }
+                    sh 'docker exec phpunit-selenium_phpunit_1 ls -R /var/www/html'
                 }
             }
         }
     }
-    
+
     post {
         always {
-            // Aquí puedes añadir acciones adicionales que deseas ejecutar siempre después de todas las etapas
+            script {
+                sh 'docker-compose down'
+            }
+        }
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed.'
         }
     }
 }
