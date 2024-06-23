@@ -5,6 +5,7 @@
     <testsuites>
         <testsuite name="UI Tests">
             <directory>testing/tests</directory>
+            <directory>testing/utils</directory>
         </testsuite>
     </testsuites>
 </phpunit>
