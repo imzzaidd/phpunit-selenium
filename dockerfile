@@ -31,7 +31,8 @@ COPY . /var/www/html
 
 # Instalar Composer y dependencias
 COPY --from=composer:2.1 /usr/bin/composer /usr/bin/composer
-RUN composer install --no-scripts --no-autoloader
+RUN composer install --no-interaction --no-scripts --no-autoloader
+RUN composer dump-autoload --optimize
 
 # Copiar el script de entrada y darle permisos de ejecución
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

@@ -19,7 +19,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build and run Docker containers
+      - name: Prepare .env file
         run: |
           echo "URL=${{ secrets.URL }}" >> .env
           echo "LOGO=${{ secrets.LOGO }}" >> .env
@@ -40,4 +40,10 @@ jobs:
           echo "LOGIN_INFO=${{ secrets.LOGIN_INFO }}" >> .env
           cat .env
 
+      - name: Build and run Docker containers
+        run: |
           docker-compose up --build --exit-code-from phpunit
+
+      - name: List files for debugging
+        run: |
+          docker exec phpunit-selenium_phpunit_1 ls -R /var/www/html
