@@ -2,55 +2,40 @@ pipeline {
     agent any
 
     environment {
-        SELENIUM_HUB_URL = 'http://selenium-hub:4444/wd/hub/status'
+        COMPOSE_FILE = 'docker-compose.yml'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/imzzaidd/phpunit-selenium'
+                // Obtiene el código fuente del proyecto
+                git 'https://github.com/imzzaidd/phpunit-selenium.git'
             }
         }
 
-        stage('Prepare Environment') {
+        stage('Build and Start Containers') {
             steps {
                 script {
-                    def envVars = [
-                        "URL=${env.URL}",
-                        "LOGO=${env.LOGO}",
-                        "USERNAME_FIELD=${env.USERNAME_FIELD}",
-                        "PASSWORD_FIELD=${env.PASSWORD_FIELD}",
-                        "VALID_USER=${env.VALID_USER}",
-                        "VALID_PASSWORD=${env.VALID_PASSWORD}",
-                        "INVALID_USER=${env.INVALID_USER}",
-                        "INVALID_PASSWORD=${env.INVALID_PASSWORD}",
-                        "LOGIN_BUTTON=${env.LOGIN_BUTTON}",
-                        "SUBTITLE=${env.SUBTITLE}",
-                        "ERROR_MESSAGE=${env.ERROR_MESSAGE}",
-                        "EMPTY_MESSAGE=${env.EMPTY_MESSAGE}",
-                        "HAMBURGER_MENU=${env.HAMBURGER_MENU}",
-                        "ABOUT_TEXT=${env.ABOUT_TEXT}",
-                        "LOGOUT_TEXT=${env.LOGOUT_TEXT}",
-                        "LOGIN_INFO=${env.LOGIN_INFO}"
-                    ]
-
-                    writeFile file: '.env', text: envVars.join('\n')
+                    // Construye y levanta los servicios definidos en docker-compose.yml
+                    sh 'docker-compose up -d --build'
                 }
             }
         }
 
-        stage('Build and Run Docker Containers') {
+        stage('Run Tests') {
             steps {
                 script {
-                    sh 'docker-compose up --build --exit-code-from phpunit'
+                    // Ejecuta las pruebas en el servicio phpunit
+                    sh 'docker-compose run phpunit'
                 }
             }
         }
 
-        stage('List Files for Debugging') {
+        stage('Stop and Remove Containers') {
             steps {
                 script {
-                    sh 'docker exec phpunit-selenium_phpunit_1 ls -R /var/www/html'
+                    // Detiene y elimina los contenedores y redes creados por docker-compose
+                    sh 'docker-compose down'
                 }
             }
         }
@@ -58,16 +43,16 @@ pipeline {
 
     post {
         always {
+            // Limpia cualquier contenedor y recursos sobrantes en caso de fallo
             script {
-                sh 'docker-compose down'
+                sh 'docker-compose down --volumes --remove-orphans'
             }
         }
         success {
-            echo 'Build completed successfully!'
+            echo 'Tests completed successfully.'
         }
         failure {
-            echo 'Build failed.'
+            echo 'Tests failed.'
         }
     }
 }
-
