@@ -73,7 +73,8 @@ pipeline {
     
     post {
         always {
-            // Clean up Docker containers if needed
+            // Aquí puedes añadir acciones adicionales que deseas ejecutar siempre después de todas las etapas
         }
     }
 }
+
