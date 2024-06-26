@@ -77,6 +77,22 @@ class InventoryView
         return $this->getConfig('HAMBURGER_MENU');
     }
 
+    public function getShoppingCartButtonXpath(): string
+    {
+        return $this->getConfig('SHOPPING_CART');
+    }
+    public function getCloseMenuButtonXpath(): string
+    {
+        return $this->getConfig('CLOSE_MENU');
+    }
+    public function getAboutTextXpath(): string
+    {
+        return $this->getConfig('ABOUT_TEXT');
+    }
+    public function getSauceLabsLogo(): string
+    {
+        return $this->getConfig('SAUCE_LABS_LOGO');
+    }
 
 
     // Método para abrir la URL
@@ -108,17 +124,32 @@ class InventoryView
     $loginMessage = $this->getElementText(WebDriverBy::xpath($this->getSubtitleXpath()));
     
     $isFirstElementPresent = $this->isElementPresent(WebDriverBy::xpath($this->getHamburgerMenuButtonXpath())); 
+    $isSecondElementPresent = $this->isElementPresent(WebDriverBy::xpath($this->getShoppingCartButtonXpath())); 
 
-    return $loginMessage . $isFirstElementPresent;
+    return $loginMessage . $isFirstElementPresent . $isSecondElementPresent;
 }
-
 
     public function clickHamburgerMenuButton(): void
     {
         $this->clickElement(WebDriverBy::xpath($this->getHamburgerMenuButtonXpath()));
     }
+    public function verifyClickHamburgerMenuButton(): string
+{
+    $ClickOk = $this->isElementPresent(WebDriverBy::xpath($this->getCloseMenuButtonXpath())); 
 
+    return $ClickOk ;
 
+}
+    public function clickAbout(): void
+    {
+        $this->clickElement(WebDriverBy::xpath($this->getAboutTextXpath()));
+    }
+    public function verifyClickAbout(): string
+{
+    $isClickAbout = $this->isElementPresent(WebDriverBy::xpath($this->getSauceLabsLogo())); 
+    $this->goBack();
+    return $isClickAbout;
+}
 
 #----------------------------------------#
 

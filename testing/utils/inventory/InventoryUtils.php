@@ -23,7 +23,9 @@ class InventoryUtils
     {
         self::performInventoryView($inventoryView);
         $inventoryView->clickHamburgerMenuButton();
-
+        $inventoryView->verifyClickHamburgerMenuButton();
+        $inventoryView->clickAbout();
+        $inventoryView->verifyClickAbout();
     }
 
 
