@@ -107,20 +107,16 @@ class InventoryView
 {
     $loginMessage = $this->getElementText(WebDriverBy::xpath($this->getSubtitleXpath()));
     
-    $isFirstElementPresent = $this->isElementPresent(WebDriverBy::id('first_element_id')); // Cambia 'first_element_id' por el id correcto
-    $isSecondElementPresent = $this->isElementPresent(WebDriverBy::id('second_element_id')); // Cambia 'second_element_id' por el id correcto
-    
-    // Devolver el mensaje de login
-    return $loginMessage;
+    $isFirstElementPresent = $this->isElementPresent(WebDriverBy::xpath($this->getHamburgerMenuButtonXpath())); 
+
+    return $loginMessage . $isFirstElementPresent;
 }
 
 
-    
     public function clickHamburgerMenuButton(): void
     {
         $this->clickElement(WebDriverBy::xpath($this->getHamburgerMenuButtonXpath()));
     }
-
 
 
 
@@ -177,7 +173,7 @@ class InventoryView
             $this->waitForElement($by);
             $this->driver->findElement($by);
             return true;
-        } catch (\NoSuchElementException $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
