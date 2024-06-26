@@ -2443,7 +2443,6 @@
         "nikic/php-parser",
         "phar-io/manifest",
         "phar-io/version",
-        "php-webdriver/webdriver",
         "phpunit/php-code-coverage",
         "phpunit/php-file-iterator",
         "phpunit/php-invoker",
@@ -2466,7 +2465,6 @@
         "sebastian/resource-operations",
         "sebastian/type",
         "sebastian/version",
-        "symfony/process",
         "theseer/tokenizer"
     ]
 }

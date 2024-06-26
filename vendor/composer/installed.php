@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b82884f6f97d89c4da4d073a4144481cbdf38502',
+        'reference' => '177ec4baf7a0020f6f7948f85b808e5a08275400',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b82884f6f97d89c4da4d073a4144481cbdf38502',
+            'reference' => '177ec4baf7a0020f6f7948f85b808e5a08275400',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -29,7 +29,7 @@
             'dev_requirement' => true,
         ),
         'facebook/webdriver' => array(
-            'dev_requirement' => true,
+            'dev_requirement' => false,
             'replaced' => array(
                 0 => '*',
             ),
@@ -86,7 +86,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../php-webdriver/webdriver',
             'aliases' => array(),
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'phpoption/phpoption' => array(
             'pretty_version' => '1.9.2',
@@ -329,7 +329,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/process',
             'aliases' => array(),
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'theseer/tokenizer' => array(
             'pretty_version' => '1.2.3',

@@ -6,6 +6,7 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverWait;
+use Facebook\WebDriver\Exception\NoSuchElementException;
 
 class InventoryView
 {
@@ -71,6 +72,10 @@ class InventoryView
         return $this->getConfig('SUBTITLE');
     }
 
+    public function getHamburgerMenuButtonXpath(): string
+    {
+        return $this->getConfig('HAMBURGER_MENU');
+    }
 
 
 
@@ -99,13 +104,28 @@ class InventoryView
     }
 
     public function verifyLoginSuccessfull(): string
-    {
-        return $this->getElementText(WebDriverBy::xpath($this->getSubtitleXpath()));
-    }
+{
+    $loginMessage = $this->getElementText(WebDriverBy::xpath($this->getSubtitleXpath()));
+    
+    $isFirstElementPresent = $this->isElementPresent(WebDriverBy::id('first_element_id')); // Cambia 'first_element_id' por el id correcto
+    $isSecondElementPresent = $this->isElementPresent(WebDriverBy::id('second_element_id')); // Cambia 'second_element_id' por el id correcto
+    
+    // Devolver el mensaje de login
+    return $loginMessage;
+}
+
 
     
+    public function clickHamburgerMenuButton(): void
+    {
+        $this->clickElement(WebDriverBy::xpath($this->getHamburgerMenuButtonXpath()));
+    }
+
+
+
 
 #----------------------------------------#
+
     private function waitForElement(WebDriverBy $by, int $timeout = 17): void
     {
         $wait = new WebDriverWait($this->driver, $timeout);
@@ -149,6 +169,16 @@ class InventoryView
             return $this->driver->findElement($by)->getText();
         } catch (\Exception $e) {
             throw new \Exception("Error al obtener el texto del elemento: " . $e->getMessage());
+        }
+    }
+    private function isElementPresent(WebDriverBy $by): bool
+    {
+        try {
+            $this->waitForElement($by);
+            $this->driver->findElement($by);
+            return true;
+        } catch (\NoSuchElementException $e) {
+            return false;
         }
     }
     private function goBack(): void

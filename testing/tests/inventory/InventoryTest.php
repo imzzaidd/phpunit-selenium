@@ -31,5 +31,10 @@ class InventoryTest extends TestCase
         InventoryUtils::performInventoryView($this->inventoryView);
     }
 
+    public function testHamburguerMenu(): void
+    {
+        InventoryUtils::performHamburguerMenu($this->inventoryView);
+    }
+
 }
 ?>

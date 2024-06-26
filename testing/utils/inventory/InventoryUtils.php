@@ -19,6 +19,12 @@ class InventoryUtils
 
         Assert::assertStringContainsString('Products', $successlogin, 'Login failed. Expected "Products" message not found.');
     }
+    public static function performHamburguerMenu(InventoryView $inventoryView): void
+    {
+        self::performInventoryView($inventoryView);
+        $inventoryView->clickHamburgerMenuButton();
+
+    }
 
 
 }

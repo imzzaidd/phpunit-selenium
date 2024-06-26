@@ -16,5 +16,6 @@ return [
     'ABOUT_TEXT' => getenv('ABOUT_TEXT'),
     'LOGOUT_TEXT' => getenv('LOGOUT_TEXT'),
     'LOGIN_INFO' => getenv('LOGIN_INFO'),
+    'FILTER_DROPDOWN' => getenv('FILTER_DROPDOWN'),
 ];
 ?>
