@@ -16,5 +16,9 @@ return [
     'ABOUT_TEXT' => getenv('ABOUT_TEXT'),
     'LOGOUT_TEXT' => getenv('LOGOUT_TEXT'),
     'LOGIN_INFO' => getenv('LOGIN_INFO'),
+    'FILTER_DROPDOWN' => getenv('FILTER_DROPDOWN'),
+    'SHOPPING_CART' => getenv('SHOPPING_CART'),
+    'CLOSE_MENU' => getenv('CLOSE_MENU'),
+    'SAUCE_LABS_LOGO' => getenv('SAUCE_LABS_LOGO'),
 ];
 ?>
