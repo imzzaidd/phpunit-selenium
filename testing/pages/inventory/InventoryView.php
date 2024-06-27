@@ -95,7 +95,7 @@ class InventoryView
     }
 
 
-    // Método para abrir la URL
+#--------------------------------
     public function open(): void
     {
         $this->driver->get($this->getUrl());
@@ -103,7 +103,9 @@ class InventoryView
         $this->waitForElement(WebDriverBy::xpath($this->getLogoXpath()));
     }
 
-    // Métodos para interactuar con los elementos de la página
+#-------------------INTERACCIONES---------------------#
+
+    
     public function setUsername(string $username): void
     {
         $this->fillField(WebDriverBy::xpath($this->getUsernameFieldXpath()), $username);
@@ -152,6 +154,7 @@ class InventoryView
 }
 
 #----------------------------------------#
+
 
     private function waitForElement(WebDriverBy $by, int $timeout = 17): void
     {
