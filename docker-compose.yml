@@ -59,4 +59,5 @@ services:
       - .env
     volumes:
       - .:/var/www/html
-    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    entrypoint: ["entrypoint.sh"]
+    command: ["vendor/bin/phpunit", "--configuration", "phpunit-selenium/phpunit.xml"]

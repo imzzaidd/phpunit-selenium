@@ -8,7 +8,6 @@
             "Testing\\Pages\\": "testing/pages/",
             "Testing\\Tests\\": "testing/tests/",
             "Testing\\Utils\\": "testing/utils/"
-        
         }
     },
     "require": {

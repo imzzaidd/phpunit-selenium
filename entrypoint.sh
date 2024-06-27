@@ -12,4 +12,5 @@ if [ -f ./.env ]; then
   eval $(dotenv -f ./.env)
 fi
 
-vendor/bin/phpunit --configuration phpunit.xml --testsuite "UI Tests"
+# Asegúrate de que Composer autoload se incluya
+php vendor/bin/phpunit --configuration phpunit.xml --testsuite "UI Tests"
