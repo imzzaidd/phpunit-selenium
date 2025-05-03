@@ -1,16 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
-echo "Esperando a que Selenium Hub esté disponible en $SELENIUM_HUB_URL..."
-while ! curl -sSf $SELENIUM_HUB_URL > /dev/null; do
-    echo "Esperando a Selenium Hub..."
-    sleep 10
+echo "Esperando a que Selenium esté disponible en $SELENIUM_HUB_URL/status..."
+
+until curl -sSf "$SELENIUM_HUB_URL/status" > /dev/null; do
+  echo "Selenium aún no está listo, esperando 2s..."
+  sleep 2
 done
 
-# Cargar las variables de entorno desde .env si existe el archivo
-if [ -f ./.env ]; then
-  # Cargar las variables de entorno desde .env utilizando el comando `dotenv`
-  eval $(dotenv -f ./.env)
-fi
-
-# Asegúrate de que Composer autoload se incluya
-php vendor/bin/phpunit --configuration phpunit.xml --testsuite "UI Tests"
+echo "✅ Selenium está disponible. Ejecutando PHPUnit..."
+exec "$@"

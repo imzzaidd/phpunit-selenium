@@ -1,6 +1,6 @@
-version: '3.8'
 services:
   selenium-hub:
+    platform: linux/amd64
     image: selenium/hub:4.20.0-20240505
     ports:
       - "4442:4442"
@@ -8,6 +8,7 @@ services:
       - "4444:4444"
 
   chrome:
+    platform: linux/amd64
     image: selenium/node-chrome:4.20.0-20240505
     shm_size: 2gb
     depends_on:
@@ -21,6 +22,7 @@ services:
       - "6900:5900"
 
   edge:
+    platform: linux/amd64
     image: selenium/node-edge:4.20.0-20240505
     shm_size: 2gb
     depends_on:
@@ -34,6 +36,7 @@ services:
       - "6901:5900"
 
   firefox:
+    platform: linux/amd64
     image: selenium/node-firefox:4.20.0-20240505
     shm_size: 2gb
     depends_on:
@@ -54,10 +57,10 @@ services:
       - edge
       - firefox
     environment:
-      - SELENIUM_HUB_URL=http://selenium-hub:4444/wd/hub/status
+      - SELENIUM_HUB_URL=http://selenium-hub:4444
     env_file:
       - .env
     volumes:
       - .:/var/www/html
     entrypoint: ["entrypoint.sh"]
-    command: ["vendor/bin/phpunit", "--configuration", "phpunit-selenium/phpunit.xml"]
+    command: ["vendor/bin/phpunit", "--configuration", "phpunit.xml"]
