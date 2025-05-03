@@ -1,26 +1,21 @@
-FROM php:8.2-apache
+FROM php:8.4-apache
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema + Chromium (compatible con ARM)
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    wget \
+    curl \
     gnupg2 \
+    ca-certificates \
+    apt-transport-https \
+    software-properties-common \
+    chromium \
+    chromium-driver \
+    unzip \
+    git \
     zlib1g-dev \
     libzip-dev \
     && docker-php-ext-install zip \
-    && docker-php-ext-enable zip
-
-# Instalar Google Chrome y ChromeDriver
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && rm -rf /var/lib/apt/lists/* \
-    && LATEST_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) \
-    && wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$LATEST_VERSION/chromedriver_linux64.zip \
-    && unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/ \
-    && rm /tmp/chromedriver.zip
+    && docker-php-ext-enable zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
