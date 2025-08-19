@@ -1,0 +1,11 @@
+{
+  "require": {
+    "phpunit/phpunit": "^10.0",
+    "php-webdriver/webdriver": "^1.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
